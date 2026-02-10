@@ -1,0 +1,418 @@
+---
+title: "Quantitative Methods in Political Science - Homework 2"
+author: "Fatih Özhasar"
+date: "Due: September 22, 2022"
+output:
+  html_document:
+    toc: no
+  pdf_document:
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+# The first line sets an option for the final document that can be produced from
+# the .Rmd file. Don't worry about it.
+knitr::opts_chunk$set(echo = TRUE)
+
+# The next bit (lines 22-43) is quite powerful and useful. 
+# First you define which packages you need for your analysis and assign it to 
+# the p_needed object. 
+p_needed <- c("viridis")
+
+# Now you check which packages are already installed on your computer.
+# The function installed.packages() returns a vector with all the installed 
+# packages.
+packages <- rownames(installed.packages())
+# Then you check which of the packages you need are not installed on your 
+# computer yet. Essentially you compare the vector p_needed with the vector
+# packages. The result of this comparison is assigned to p_to_install.
+p_to_install <- p_needed[!(p_needed %in% packages)]
+# If at least one element is in p_to_install you then install those missing
+# packages.
+if (length(p_to_install) > 0) {
+  install.packages(p_to_install)
+}
+# Now that all packages are installed on the computer, you can load them for
+# this project. Additionally the expression returns whether the packages were
+# successfully loaded.
+sapply(p_needed, require, character.only = TRUE)
+```
+
+## Part 1: Definitions 
+
+1.1 Define in one sentence what a random variable is. Give two examples from your field of studies. One with a discrete and one with continuous realizations.
+
+A random variable is a function that assigns a number to each outcome of the sample space of an experiment.
+
+The number of time a MP deviate from party line can be given as an example if discrete and increase of vote share of a party in a decade can be given as an example of continuous realization
+
+
+
+1.2. Define in one sentence what is meant by the colloquial phrase "the probability of x is..."
+
+Answer: the probability of an x event means that long-run relative frequency of an x.
+
+## Part 2: Probability in R
+
+You should get familiar with the basic probability distributions and their behavior. In the following you will have to plot several of them. Please choose a suitable way of displaying them in each case (i.e., adjust axis limits, choose informative labels).
+
+2.1. Plot the density function of a normal distribution with mean 1 and variance of 1. Then plot the cumulative distribution function of this variable.
+
+
+```{r Exercise 2.1}
+x_values <- seq(from = -6, to = 6, by = 0.1) 
+
+
+plot(x = x_values, 
+     y = dnorm(x_values, mean = 1, sd = 1),
+     bty = "n", 
+     las = 1,   
+  type = "l",
+     col = viridis(1), 
+     lwd = 2,
+     main = "PDF of N(1, 1)",  
+     ylab = "f(x)",
+     xlab = "x"
+     )
+
+plot(x = x_values, 
+     y = pnorm(x_values),
+     bty = "n", 
+     las = 1,
+     type = "l",
+     col = viridis(1),
+     lwd = 2, #line with
+     main = "CDF of N(1, 1)", #title
+     ylab = "F(x)",
+     xlab = "x"
+     )
+x_values <- seq(from = -5, to = 5, by = 0.1) # seq go from 0.5 to 5 by 0.1 range
+
+plot(x = x_values, 
+     y = dnorm(x_values), #calculate the density
+     bty = "n", 
+     las = 1,
+     type = "p",
+     col = viridis(1),
+     lwd = 2,
+     main = "PDF of N(0, 1)",
+     ylab = "f(x)",
+     xlab = "x"
+     )
+ # below is to have a line to have a continuous line  type= "l"
+plot(x = x_values, 
+     y = pnorm(x_values),
+     bty = "n", 
+     las = 1,
+     type = "l",
+     col = viridis(1),
+     lwd = 2, #line with
+     main = "CDF of N(0, 1)", #title
+     ylab = "F(x)",
+     xlab = "x"
+     )
+
+dnorm(0, mean = 1, sd = 1) #density function of a normal distribution with mean 1 and variance of 1
+
+plot(dnorm) 
+
+#plot the cumulative distribution function of this variable.
+x_values <- 0:100
+
+plot(x = x_values, 
+     y = pbinom(x_values, size = 100, p = 0.5),
+     type = "p",
+     main = "CDF for Binomial (n = 100, p = 0.5)",
+     xlab = "x",
+     ylab = "Probability",
+     bty = "n",
+     las = 1,
+     pch = 19, 
+     cex = 0.3, 
+     col = viridis(1),
+     frame = F
+     )
+```
+
+2.2. Briefly explain the difference between the density function and the cumulative distribution function.
+
+Answer:
+
+Probability Density Function, returns the probability of a given continuous outcome while the Cumulative Distribution Function, returns the probability of a value less than or equal to a given outcome.
+
+2.3. Plot the density function and the cumulative distribution function of a standard normal distribution.
+
+
+```{r Exercise 2.3}
+dnorm(20, mean = 0, sd = 1) #density function
+pnorm(20, mean = 0, sd = 1)	#cumulative distribution function
+x_values <- seq(from = -5, to = 5, by = 0.1) # seq go from 0.5 to 5 by 0.1 range
+
+plot(x = x_values, 
+     y = dnorm(x_values), #calculate the density
+     bty = "n", 
+     las = 1,
+     type = "p",
+     col = viridis(1),
+     lwd = 2,
+     main = "PDF of N(0, 1)",
+     ylab = "f(x)",
+     xlab = "x"
+     )
+ # below is to have a line to have a continuous line  type= "l"
+plot(x = x_values, 
+     y = pnorm(x_values),
+     bty = "n", 
+     las = 1,
+     type = "l",
+     col = viridis(1),
+     lwd = 2, #line with
+     main = "CDF of N(0, 1)", #title
+     ylab = "F(x)",
+     xlab = "x"
+     )
+
+plot(dnorm)
+plot(pnorm)
+
+```
+
+2.4. Plot the probability mass function of a random variable that follows a binomial distribution with 30 trials and a success probability of $\frac{1}{2}$.
+
+```{r Exercise 2.4}
+
+x_values <- 0:100
+# Now we produce an empty plot.
+plot(
+  x = x_values,
+  ylim = c(0, 0.1), # With ylim you can adjust the limits of the y axis.
+  type = "n",       # type "n" produces an empty plot window.
+  main = "PMF for Binomial (n = 30, p = 0.5)",
+  xlab = "x",
+  ylab = "p(x)",
+  las = 1,
+  frame = F
+  )
+# Let's add the points.
+points(x_values, 
+       dbinom(x_values, size = 30, p = 0.5), 
+       cex = 0.3, 
+       pch = 19, 
+       col = viridis(1)
+       )
+# And lines
+segments(x0 = x_values, 
+         y0 = 0, 
+         x1 = x_values, 
+         y1 = dbinom(x_values, size = 30, p = 0.5), 
+         col = viridis(1)
+         )  
+
+rbinom(n = 1, size = 30, prob = 0.5)
+
+
+# First, we need an x-axis
+x_values <- 0:40
+
+# Now we produce an empty plot.
+plot(
+  x = x_values,
+  ylim = c(0, 0.15), # With ylim you can adjust the limits of the y axis.
+  type = "n",       # type "n" produces an empty plot window.
+  main = "PMF for Binomial (n = 30, p = 0.5)",
+  xlab = "x",
+  ylab = "p(x)",
+  las = 1,
+  frame = F
+  )
+
+# Let's add the points.
+points(x_values, 
+       dbinom(x_values, size = 30, p = 0.5), 
+       cex = 0.3, 
+       pch = 19, 
+       col = viridis(1)
+       )
+
+# And those lines we know from the lecture.
+segments(x0 = x_values, 
+         y0 = 0, 
+         x1 = x_values, 
+         y1 = dbinom(x_values, size = 30, p = 0.5), 
+         col = viridis(1)
+         )  
+
+
+
+
+
+x_values <- 0:50
+
+plot(x = x_values, 
+     y = pbinom(x_values, size = 50, p = 0.5),
+     type = "p",
+     main = "CDF Fair coin (n = 50, p = 0.5)",
+     xlab = "coin tosses",
+     ylab = "Probability",
+     bty = "n",
+     las = 1,
+     pch = 19, 
+     cex = 0.3, 
+     col = viridis(1),
+     frame = F
+     )
+
+
+
+
+#a biased coin: let the probability of having a Head be 0.60.
+
+
+plot(x = x_values, 
+     y = pbinom(q = x_values, size = 50, p = 0.6),
+     bty = "n",
+     las = 1,
+     pch = 19,
+     xlab = "coin tosses",
+     ylab = "Probability of having head",
+     main = "CDF biased coin (n = 50, p = 0.6)",
+     cex = 0.5, 
+     col = viridis(1),
+     frame = F
+     )
+
+
+```
+
+2.5. Compare the cumulative distribution function of 50 coin tosses for (i) a fair coin and (ii) a biased coin (choose the amount of bias yourself).
+
+
+
+```{r Exercise 2.5}
+
+rbinom(n = 1000, size = 50, prob = 0.5) #(i) a fair coin
+rbinom(n = 1000, size = 50, prob = 0.75) #(ii) a biased coin
+
+plot(x = rbinom(n = 1000, size = 50, prob = 0.5), 
+     y = rbinom(n = 1000, size = 50, prob = 0.75),
+     type = "p",
+     main = "CDF for fair and biased coin",
+     xlab = "x",
+     ylab = "Probability",
+     bty = "n",
+     las = 1,
+     pch = 19, 
+     cex = 0.3, 
+     col = viridis(1),
+     frame = F
+     )
+
+```
+
+## Part 3: Answer probabilistic questions
+
+Suppose you want to forecast election results. You believe that voters are very good in forecasting the elections. Therefore, you take a sample from the voter population and ask them: What percentage of votes will the Greens receive in the upcoming elections? You find that the answers to this question in your sample approximately follow a normal distribution with a mean of 18 and a standard deviation of 3.
+
+3.1. Plot the distribution in your sample.
+
+
+```{r Exercise 3.1}
+
+
+pop <- rnorm(1000, mean = 18, sd = 3)
+
+plot(density(pop),
+     bty = "n",
+     las = 1,
+     col = viridis(1),
+     lwd = 2,
+     main = "Density of population"
+)
+dnorm(20, mean = 18, sd = 3)
+
+plot(dnorm)
+
+
+```
+
+3.2. What is the percentage of voters in your sample that thought the Greens will win less than 15%?
+
+
+Answer:
+
+```{r}
+pnorm(q=0.15, mean = 0, sd = 1) * 100
+
+```
+
+
+```{r Exercise 3.2}
+population <- 0:1000
+
+pnorm(q = 0.15, mean = 0, sd =1)
+
+```
+
+
+
+3.3. How many voters in your sample thought that the Greens will win more than 20% but less than 25%?
+
+```{r Exercise 3.3}
+pnorm(q = 0.25, mean = 0, sd = 1) - pnorm(q = 0.20, mean =0, sd = 1)
+```
+
+Answer:
+
+3.4. Last time, in the German federal election 2021, the Greens actually won around 14.8%. Is this value within the range of what 90% of the voters that are most optimistic about the success of the Greens think?
+
+```{r Exercise 3.4}
+qnorm(p = 0.14, mean = 0, sd = 1)
+```
+
+## Part 4: Applied probability
+
+Just prior to the selection of the jury for O.J. Simpson's murder trial in 1995, a poll found that about 20% of the adult population believed Simpson was innocent. For illustration, take it as the true percentage of people who thought Simpson was innocent prior to jury selection.
+
+Assume that the 12 jurors were selected randomly and independently from the population (although this turned out not to be true).
+
+4.1. Find the probability that the jury had at least one member who believed in Simpson's innocence prior to jury selection.
+
+*Hint:* Define the Binomial(12, 0.2) random variable `X` to be the number of jurors believing in Simpson's innocence.
+
+```{r Exercise 4.1}
+1 - pbinom(q = 10, size = 12, p = 0.2)
+
+```
+
+4.2. Find the probability that the jury had at least two members who believed in Simpson's innocence.
+
+*Hint:* $P(X\geq2)=1-P(X\leq1)$, and $P(X\leq1)=P(X=0)+P(X=1).$
+
+```{r Exercise 4.2}
+1 - pnorm(q = 1.96, mean = 0, sd = 1)
+```
+
+4.3. Explain in two sentences what is the implication of random and independent selection process of jurors for our calculations. 
+
+Answer:
+
+
+```{r}
+# 3.3
+sum(pop > 20 & pop < 25)
+
+# 3.4
+qnorm(p = 0.10, mean = 18, sd = 3)
+
+# 4.1
+1 - pbinom(q = 0, size = 12, p = 0.2)
+
+# 4.2
+1 - pbinom(q = 1, size = 12, p = 0.2)
+
+```
+
+
+
+
+
